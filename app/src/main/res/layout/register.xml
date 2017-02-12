@@ -20,14 +20,6 @@
             android:id="@+id/Register_head"
             android:layout_weight="1" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/edit_usertype"
-            android:layout_weight="1"
-            android:hint="User types(Parents or Teacher)"/>
-
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

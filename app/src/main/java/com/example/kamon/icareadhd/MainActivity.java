@@ -18,7 +18,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int intLanguage = 0;
     private MyConstant myConstant;
-    private String[] emailStrings , passStrings, loginStrings,createStrings;
+    private String[] emailStrings, passStrings, loginStrings, createStrings;
+    private DatabaseUser databaseUser;
+    private EditText Uname, Password;
+    private Button button, button2;
 
 
     @Override
@@ -26,8 +29,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Check Language
-        checkLanguage();
+        //Setup
+        databaseUser = new DatabaseUser(MainActivity.this);
+        SQLiteDatabase sqLiteDatabase = databaseUser.getWritableDatabase();
+
 
         //set up
         myConstant = new MyConstant();
@@ -37,18 +42,16 @@ public class MainActivity extends AppCompatActivity {
         createStrings = myConstant.getCreateAccountButtonMain();
 
 
-                mHelper = new DatabaseUser(this);
+        mHelper = new DatabaseUser(this);
         mDb = mHelper.getReadableDatabase();
-        Button button = (Button)findViewById(R.id.login_buttoncreacc);
-        Button button2 = (Button)findViewById(R.id.login_buttonlogin);
-        final EditText Uname = (EditText) findViewById(R.id.login_uname);
-        final EditText Password = (EditText) findViewById(R.id.login_password);
+        button = (Button) findViewById(R.id.login_buttoncreacc);
+        button2 = (Button) findViewById(R.id.login_buttonlogin);
+        Uname = (EditText) findViewById(R.id.login_uname);
+        Password = (EditText) findViewById(R.id.login_password);
 
-        //show view
-        Uname.setText(emailStrings[intLanguage]);
-        Password.setText(passStrings[intLanguage]);
-        button.setText(createStrings[intLanguage]);
-        button2.setText(loginStrings[intLanguage]);
+        //Check Language
+        checkLanguage();
+
 
 
         button2.setOnClickListener(new View.OnClickListener() {
@@ -71,10 +74,19 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),Register.class);
+                Intent i = new Intent(getApplicationContext(), Register.class);
                 startActivity(i);
             }
         });
+    }   // Main Method
+
+
+
+    private void showView() {
+        Uname.setText(emailStrings[intLanguage]);
+        Password.setText(passStrings[intLanguage]);
+        button.setText(createStrings[intLanguage]);
+        button2.setText(loginStrings[intLanguage]);
     }
 
 
@@ -87,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (cursor.getCount() == 0) {
             startActivity(new Intent(MainActivity.this, ChooseLanguage.class));
+            finish();
+        } else {
+
+            intLanguage = Integer.parseInt(cursor.getString(1));
+            showView();
+
         }
 
     }   // checkLanguage

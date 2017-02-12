@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -23,16 +24,12 @@ public class Register extends Activity {
     //Explicit
     private DatabaseUser mHelper;
     private SQLiteDatabase mDb;
-    private Spinner spinner;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
-
-    private int intLanguage = 1;
+    private int intLanguage = 0;
     private MyConstant myConstant;
-    private String[] userStrings,creatingStings,firstStrings,lastStrings,emailStrings,passStrings,doneStrings;
+    private String[] userStrings, creatingStings, firstStrings, lastStrings, emailStrings, passStrings, doneStrings;
+    private EditText editFName, editLName, editEMail, editPass;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +38,11 @@ public class Register extends Activity {
 
         //Bind Widget
         spinner = (Spinner) findViewById(R.id.spinner);
+        editFName = (EditText) findViewById(R.id.edit_fname);
+        editLName = (EditText) findViewById(R.id.edit_lname);
+        editEMail = (EditText) findViewById(R.id.edit_email);
+        editPass = (EditText) findViewById(R.id.edit_pass);
+        final TextView creating = (TextView) findViewById(R.id.Register_head);
 
         //For Spinner
         setupSpinner();
@@ -48,12 +50,8 @@ public class Register extends Activity {
 
         mHelper = new DatabaseUser(this);
         mDb = mHelper.getWritableDatabase();
-        final EditText editUserType = (EditText) findViewById(R.id.edit_usertype);
-        final EditText editFName = (EditText) findViewById(R.id.edit_fname);
-        final EditText editLName = (EditText) findViewById(R.id.edit_lname);
-        final EditText editEMail = (EditText) findViewById(R.id.edit_email);
-        final EditText editPass = (EditText) findViewById(R.id.edit_pass);
-        final TextView creating = (TextView) findViewById(R.id.Register_head);
+
+
 
 
         //set up
@@ -68,7 +66,13 @@ public class Register extends Activity {
         creatingStings = myConstant.getCreatingButtonRegister();
 
         //show view
-        editUserType.setText(userStrings[intLanguage]);
+        SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(DatabaseUser.DB_NAME,
+                MODE_PRIVATE, null);
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM languageTABLE", null);
+        cursor.moveToFirst();
+        intLanguage = Integer.parseInt(cursor.getString(1));
+
+
         editFName.setText(firstStrings[intLanguage]);
         editLName.setText(lastStrings[intLanguage]);
         editEMail.setText(emailStrings[intLanguage]);
@@ -83,7 +87,7 @@ public class Register extends Activity {
         buttonDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String type = editUserType.getText().toString();
+                String type = "test";
                 String fname = editFName.getText().toString();
                 String lname = editLName.getText().toString();
                 String email = editEMail.getText().toString();
@@ -103,7 +107,7 @@ public class Register extends Activity {
                                 + DatabaseUser.COL_EMAIL + ", "
                                 + DatabaseUser.COL_PASS + ") VALUES ('" + type
                                 + "', '" + fname + "', '" + lname + "', '" + email + "', '" + pass + "');");
-                        editUserType.setText("");
+
                         editFName.setText("");
                         editLName.setText("");
                         editEMail.setText("");
@@ -127,7 +131,13 @@ public class Register extends Activity {
     } //Main Class
 
     private void setupSpinner() {
-        String[] strings = new String[]{"Parents","Teacher","Doctor"};
+        String[] strings = new String[]{"Parents", "Teacher", "Doctor"};
+
+        ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<String>(Register.this,
+                android.R.layout.simple_list_item_1, strings);
+        spinner.setAdapter(stringArrayAdapter);
+
+
     }   //setupSpinner
 
 
